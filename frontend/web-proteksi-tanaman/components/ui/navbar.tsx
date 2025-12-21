@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, ChevronDown } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -13,6 +13,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 // --- TIPE DEFINISI ---
 type MenuItemChild = {
@@ -34,38 +35,36 @@ const menuItems: MenuItem[] = [
     title: "Profil",
     children: [
       { title: "Sejarah", href: "/profil/sejarah" },
-      {
-        title: "Visi Misi",
-        href: "/profil/visi-misi",
-        children: [
-          {
-            title: "Visi Misi & Tujuan Prodi S1",
-            href: "/profil/visi-misi#visi",
-          },
-          {
-            title: "Visi Misi & Tujuan Prodi S2",
-            href: "/profil/visi-misi#misi",
-          },
-        ],
-      },
+      { title: "Visi Misi", href: "/profil/visi-misi" },
     ],
   },
   {
-    title: "Pendidikan",
+    title: "Akademik",
     children: [
-      { title: "Sarjana", href: "/pendidikan/s1" },
-      { title: "Pascasarjana", href: "/pendidikan/s2" },
+      { title: "Sarjana", href: "/akademik/s1" },
+      { title: "Pascasarjana", href: "/akademik/s2" },
     ],
   },
-  { title: "Publikasi", children: [{ title: "Jurnal", href: "/publikasi" }] },
   {
-    title: "Fasilitas",
-    children: [{ title: "Laboratorium", href: "/fasilitas" }],
+    title: "Riset & Publikasi",
+    children: [
+      { title: "Riset", href: "/riset" },
+      { title: "Publikasi", href: "/publikasi" },
+    ],
   },
-  { title: "Dokumen", children: [{ title: "SOP", href: "/dokumen" }] },
   {
-    title: "Layanan",
-    children: [{ title: "Kemahasiswaan", href: "/layanan" }],
+    title: "Penjaminan Mutu",
+    children: [
+      { title: "SOP", href: "/penjaminan-mutu/sop" },
+      { title: "Dokumen", href: "/penjaminan-mutu/dokumen" },
+    ],
+  },
+  {
+    title: "Informasi",
+    children: [
+      { title: "Berita", href: "/informasi/berita" },
+      { title: "Pengumuman", href: "/informasi/pengumuman" },
+    ],
   },
 ];
 
@@ -120,27 +119,26 @@ export default function Navbar() {
     <nav className="w-full bg-[#005320] text-white px-4 py-3 shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between">
         {/* === LOGO & BRANDING === */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="border border-white/20 px-2 py-1 rounded bg-white text-black font-semibold text-sm">
-              ID
-            </span>
-          </div>
-          <div className="h-10 w-px bg-white/30 mx-1" aria-hidden="true" />
+        <div className="flex items-center gap-3">
           <Link
             href="/"
             className="flex items-center gap-3 hover:opacity-90 transition-opacity"
           >
-            <div className="h-10 w-10 bg-yellow-400 rounded-full flex items-center justify-center text-black text-xs font-bold overflow-hidden shrink-0">
-              {/* Pastikan gambar ada di folder public */}
-              <img
-                src="/logo-ipb.png"
-                alt="Logo IPB"
-                className="object-cover w-full h-full"
+            {/* Logo dengan shield-like border */}
+            <div className="relative h-12 w-12 flex items-center justify-center shrink-0">
+              <Image
+                src="/LogoUNAND.png"
+                alt="Logo Unand"
+                width={40}
+                height={40}
+                className="relative z-10"
               />
             </div>
+            {/* Vertical line separator */}
+            <div className="h-10 w-px bg-white/30" aria-hidden="true" />
+            {/* Text branding */}
             <div className="flex flex-col leading-tight">
-              <span className="font-bold text-lg tracking-wide">
+              <span className="font-bold md:text-lg tracking-wide text-xs">
                 Departemen Proteksi Tanaman
               </span>
               <span className="text-sm font-light text-gray-200">
@@ -158,7 +156,7 @@ export default function Navbar() {
                 {item.children ? (
                   // Kalo ada Dropdown
                   <>
-                    <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 hover:text-white focus:bg-white/20 focus:text-white data-[state=open]:bg-white/20 font-bold">
+                    <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 hover:text-white focus:bg-white/20 focus:text-white data-[state=open]:bg-white/20 font-bold flex items-center gap-1">
                       {item.title}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -190,9 +188,20 @@ export default function Navbar() {
         </NavigationMenu>
 
         {/* === RIGHT ICONS === */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button className="p-2 rounded-full hover:bg-white/10 transition-colors">
             <Search className="w-5 h-5 text-white" />
+          </button>
+          {/* Language selector with Indonesian flag */}
+          <button className="flex items-center gap-2 px-2 py-1 rounded hover:bg-white/10 transition-colors">
+            <div className="flex items-center">
+              {/* Indonesian flag */}
+              <div className="w-5 h-3 border border-white/30 flex flex-col">
+                <div className="h-1/2 bg-red-600" />
+                <div className="h-1/2 bg-white" />
+              </div>
+              <span className="ml-2 text-sm font-semibold">ID</span>
+            </div>
           </button>
           <button
             className="lg:hidden p-2 rounded-full hover:bg-white/10 transition-colors"
