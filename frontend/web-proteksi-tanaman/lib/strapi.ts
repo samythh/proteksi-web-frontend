@@ -191,9 +191,9 @@ export async function fetchStrapi<T>(
   const apiPath = endpoint.startsWith('/api') ? endpoint : `/api${endpoint}`;
   const url = `${STRAPI_API_URL}${apiPath}${queryString ? `?${queryString}` : ''}`;
 
-  const requestHeaders: HeadersInit = {
+  const requestHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...headers,
+    ...(headers as Record<string, string>),
   };
 
   // Add API token if available

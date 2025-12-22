@@ -1,12 +1,12 @@
 // File: app/page.tsx
-import HeroSlider from "@/components/sections/HeroSlider"; // Pastikan path ini benar
+import HeroSlider from "@/components/sections/HeroSlider"; // Memanggil komponen Slider
 
 export default function Home() {
     return (
         <main className="flex flex-col min-h-screen">
 
-            {/* 1. Hero Section (Slider) diletakkan paling atas */}
-            {/* Kita tidak perlu mengoper prop 'data' karena di dalamnya sudah ada dummySlides sebagai fallback */}
+            {/* 1. Hero Section (Slider) */}
+            {/* Kita panggil komponennya di sini. Tidak perlu props 'data' karena sudah ada dummy di dalamnya. */}
             <HeroSlider />
 
             {/* 2. Konten Halaman Lainnya */}

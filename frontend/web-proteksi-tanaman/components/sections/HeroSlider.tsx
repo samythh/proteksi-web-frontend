@@ -23,12 +23,12 @@ interface Slide {
 }
 
 interface HeroSliderProps {
-    data?: { // Tanda tanya (?) membuat props ini opsional
+    data?: {
         slides: Slide[];
     };
 }
 
-// --- DATA DUMMY (DATA PENGGANTI SEMENTARA) ---
+// --- DATA DUMMY ---
 const dummySlides: Slide[] = [
     {
         id: 1,
@@ -37,7 +37,6 @@ const dummySlides: Slide[] = [
         image: {
             data: {
                 attributes: {
-                    // Gambar Sawah / Pertanian Hijau
                     url: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1740&auto=format&fit=crop"
                 }
             }
@@ -50,7 +49,6 @@ const dummySlides: Slide[] = [
         image: {
             data: {
                 attributes: {
-                    // Gambar Peneliti / Laboratorium Tanaman
                     url: "https://images.unsplash.com/photo-1592982537447-6f2a6a0c8019?q=80&w=1740&auto=format&fit=crop"
                 }
             }
@@ -63,7 +61,6 @@ const dummySlides: Slide[] = [
         image: {
             data: {
                 attributes: {
-                    // Gambar Petani di Lapangan
                     url: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1740&auto=format&fit=crop"
                 }
             }
@@ -74,14 +71,9 @@ const dummySlides: Slide[] = [
 export default function HeroSlider({ data }: HeroSliderProps) {
     const [current, setCurrent] = useState(0);
 
-    // LOGIKA PEMILIHAN DATA:
-    // Jika ada data dari Backend (props), gunakan itu.
-    // Jika tidak ada, gunakan dummySlides.
     const slides = data?.slides && data.slides.length > 0 ? data.slides : dummySlides;
-
     const length = slides.length;
 
-    // --- LOGIKA NAVIGASI ---
     const nextSlide = () => {
         setCurrent(current === length - 1 ? 0 : current + 1);
     };
@@ -90,7 +82,6 @@ export default function HeroSlider({ data }: HeroSliderProps) {
         setCurrent(current === 0 ? length - 1 : current - 1);
     };
 
-    // --- AUTO SLIDE ---
     useEffect(() => {
         if (length <= 1) return;
         const timer = setTimeout(() => {
@@ -99,19 +90,13 @@ export default function HeroSlider({ data }: HeroSliderProps) {
         return () => clearTimeout(timer);
     }, [current, length]);
 
-    // --- HELPER: URL FORMATTER ---
     const getImageUrl = (image: SlideImage | undefined) => {
         const url = image?.data?.attributes?.url;
         if (!url) return null;
-
-        // Cek apakah URL eksternal (http/https)
         if (url.startsWith('http')) return url;
-
-        // Jika URL internal Strapi (/uploads/...), tambahkan domain
         return `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${url}`;
     };
 
-    // Render pesan jika benar-benar tidak ada data sama sekali (dummy pun error)
     if (!slides || slides.length === 0) {
         return (
             <div className="w-full h-96 flex items-center justify-center bg-gray-200 text-gray-500">
@@ -145,50 +130,60 @@ export default function HeroSlider({ data }: HeroSliderProps) {
                         ) : (
                             <div className="w-full h-full bg-slate-800 flex flex-col items-center justify-center text-slate-600">
                                 <ImageIcon size={64} className="mb-2 opacity-20" />
-                                <span className="text-sm font-mono opacity-30">NO IMAGE</span>
                             </div>
                         )}
 
-                        {/* LAYER 2: GRADIENT OVERLAY (Hitam Bawah ke Transparan Atas) */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                        {/* LAYER 2: GRADIENT OVERLAY */}
+                        {/* Gradien Bawah ke Atas (Agar footer slider jelas) */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90" />
 
-                        {/* LAYER 3: KONTEN TEKS */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 md:px-20 z-20 mt-12">
-                            {/* Judul Utama - Animasi Slide Up */}
+                        {/* Gradien Kiri ke Kanan (PENTING UNTUK RATA KIRI) */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent opacity-90" />
+
+                        {/* LAYER 3: KONTEN TEKS - PENEGASAN RATA KIRI */}
+                        {/* - items-start: Memaksa semua anak (text, btn) menempel ke KIRI.
+                           - text-left: Memastikan alinea teks rata KIRI.
+                           - pl-8 md:pl-20: Memberikan jarak (padding) dari sisi KIRI layar.
+                        */}
+                        <div className="absolute inset-0 flex flex-col justify-center items-start text-left px-8 md:px-20 lg:px-32 z-20 w-full">
+
+                            {/* Judul Utama */}
                             <h2
-                                className={`text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-xl transition-all duration-700 delay-100 transform ${
-                                    isActive ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+                                className={`text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-xl transition-all duration-700 delay-100 transform max-w-4xl leading-tight ${
+                                    isActive ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
                                 }`}
                             >
                                 {slide.title}
                             </h2>
 
-                            {/* Subjudul - Animasi Slide Up dengan delay */}
+                            {/* Subjudul */}
                             <p
-                                className={`text-gray-200 text-lg md:text-xl max-w-3xl font-light leading-relaxed drop-shadow-md transition-all duration-700 delay-200 transform ${
-                                    isActive ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+                                className={`text-gray-200 text-lg md:text-xl max-w-2xl font-light leading-relaxed drop-shadow-md transition-all duration-700 delay-200 transform ${
+                                    isActive ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
                                 }`}
                             >
                                 {slide.subtitle}
                             </p>
 
-                            {/* Tombol - Animasi Fade In */}
-                            <button
-                                className={`mt-8 px-8 py-3 bg-[#005700] hover:bg-[#004200] text-white rounded-full font-medium transition-all duration-500 delay-300 shadow-lg border border-green-500/30 transform hover:scale-105 ${
-                                    isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-                                }`}
-                            >
-                                Selengkapnya
-                            </button>
+                            {/* Tombol Selengkapnya */}
+                            {/* Div pembungkus juga defaultnya block, jadi akan mengikuti items-start dari parent */}
+                            <div className={`mt-8 transition-all duration-500 delay-300 transform ${
+                                isActive ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
+                            }`}>
+                                <button
+                                    className="px-8 py-3 bg-[#005700] hover:bg-[#004200] text-white rounded-full font-medium transition-all shadow-lg border border-green-500/30 hover:scale-105 active:scale-95"
+                                >
+                                    Selengkapnya
+                                </button>
+                            </div>
                         </div>
                     </div>
                 );
             })}
 
-            {/* LAYER 4: NAVIGASI */}
+            {/* LAYER 4: NAVIGASI (PANAH & DOTS) */}
             {length > 1 && (
                 <>
-                    {/* Panah Kiri */}
                     <button
                         onClick={prevSlide}
                         className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/10 transition-all z-30 opacity-0 group-hover:opacity-100"
@@ -196,7 +191,6 @@ export default function HeroSlider({ data }: HeroSliderProps) {
                         <ChevronLeft size={32} />
                     </button>
 
-                    {/* Panah Kanan */}
                     <button
                         onClick={nextSlide}
                         className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/10 transition-all z-30 opacity-0 group-hover:opacity-100"
@@ -204,7 +198,6 @@ export default function HeroSlider({ data }: HeroSliderProps) {
                         <ChevronRight size={32} />
                     </button>
 
-                    {/* Dots Indikator */}
                     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-3 z-30">
                         {slides.map((_, idx) => (
                             <button
