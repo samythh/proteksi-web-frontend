@@ -16,12 +16,11 @@ const nextConfig: NextConfig = {
         hostname: '**.amazonaws.com',
         pathname: '/**',
       },
-      // Tambahkan domain Strapi production Anda di sini
-      // {
-      //   protocol: 'https',
-      //   hostname: 'your-strapi-domain.com',
-      //   pathname: '/uploads/**',
-      // },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
     ],
   },
 };

@@ -2,13 +2,16 @@
  * Strapi API Client
  * Utility functions untuk fetch data dari Strapi CMS
  */
-import qs from "qs";
 
-const STRAPI_API_URL =
-  process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
-const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN || "";
-const STRAPI_MEDIA_URL =
-  process.env.NEXT_PUBLIC_STRAPI_MEDIA_URL || STRAPI_API_URL;
+// Strapi Configuration
+const STRAPI_API_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
+const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN || '';
+const STRAPI_MEDIA_URL = process.env.NEXT_PUBLIC_STRAPI_MEDIA_URL || STRAPI_API_URL;
+
+// Helper untuk mendapatkan base URL
+export function getStrapiUrl(path: string = ''): string {
+  return `${STRAPI_API_URL}${path}`;
+}
 
 // Types untuk Strapi Response
 export interface StrapiResponse<T> {
@@ -77,8 +80,8 @@ export interface StrapiImage {
  * Get full URL untuk Strapi media/image
  */
 export function getStrapiMediaUrl(url: string | null | undefined): string {
-  if (!url) return "";
-  if (url.startsWith("http://") || url.startsWith("https://")) {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
   return `${STRAPI_MEDIA_URL}${url}`;
@@ -102,19 +105,63 @@ interface StrapiQueryOptions {
 }
 
 export function buildStrapiQuery(options: StrapiQueryOptions = {}): string {
-  const { pagination, ...otherOptions } = options;
+  const params = new URLSearchParams();
 
-  const query = qs.stringify(
-    {
-      ...otherOptions, // populate, filters, sort, fields, locale
-      pagination, // pagination object langsung dikenali qs
-    },
-    {
-      encodeValuesOnly: true, // Biar URL-nya cantik
+  // Populate
+  if (options.populate) {
+    if (typeof options.populate === 'string') {
+      params.append('populate', options.populate);
+    } else if (Array.isArray(options.populate)) {
+      params.append('populate', options.populate.join(','));
+    } else {
+      params.append('populate', JSON.stringify(options.populate));
     }
-  );
+  } else {
+    // Default populate all
+    params.append('populate', '*');
+  }
 
-  return query;
+  // Filters
+  if (options.filters) {
+    params.append('filters', JSON.stringify(options.filters));
+  }
+
+  // Sort
+  if (options.sort) {
+    if (Array.isArray(options.sort)) {
+      params.append('sort', options.sort.join(','));
+    } else {
+      params.append('sort', options.sort);
+    }
+  }
+
+  // Pagination
+  if (options.pagination) {
+    if (options.pagination.page !== undefined) {
+      params.append('pagination[page]', options.pagination.page.toString());
+    }
+    if (options.pagination.pageSize !== undefined) {
+      params.append('pagination[pageSize]', options.pagination.pageSize.toString());
+    }
+    if (options.pagination.start !== undefined) {
+      params.append('pagination[start]', options.pagination.start.toString());
+    }
+    if (options.pagination.limit !== undefined) {
+      params.append('pagination[limit]', options.pagination.limit.toString());
+    }
+  }
+
+  // Fields
+  if (options.fields && options.fields.length > 0) {
+    params.append('fields', options.fields.join(','));
+  }
+
+  // Locale
+  if (options.locale) {
+    params.append('locale', options.locale);
+  }
+
+  return params.toString();
 }
 
 /**
@@ -123,7 +170,7 @@ export function buildStrapiQuery(options: StrapiQueryOptions = {}): string {
 export async function fetchStrapi<T>(
   endpoint: string,
   options: StrapiQueryOptions & {
-    method?: "GET" | "POST" | "PUT" | "DELETE";
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
     body?: any;
     headers?: HeadersInit;
     cache?: RequestCache;
@@ -131,29 +178,27 @@ export async function fetchStrapi<T>(
   } = {}
 ): Promise<StrapiResponse<T>> {
   const {
-    method = "GET",
+    method = 'GET',
     body,
     headers = {},
-    cache = "default",
+    cache = 'default',
     next,
     ...queryOptions
   } = options;
 
   const queryString = buildStrapiQuery(queryOptions);
   // Support untuk Strapi v4 dan v5
-  const apiPath = endpoint.startsWith("/api") ? endpoint : `/api${endpoint}`;
-  const url = `${STRAPI_API_URL}${apiPath}${
-    queryString ? `?${queryString}` : ""
-  }`;
+  const apiPath = endpoint.startsWith('/api') ? endpoint : `/api${endpoint}`;
+  const url = `${STRAPI_API_URL}${apiPath}${queryString ? `?${queryString}` : ''}`;
 
-  const requestHeaders: HeadersInit = {
-    "Content-Type": "application/json",
-    ...headers,
+  const requestHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(headers as Record<string, string>),
   };
 
   // Add API token if available
   if (STRAPI_API_TOKEN) {
-    requestHeaders["Authorization"] = `Bearer ${STRAPI_API_TOKEN}`;
+    requestHeaders['Authorization'] = `Bearer ${STRAPI_API_TOKEN}`;
   }
 
   const fetchOptions: RequestInit = {
@@ -163,7 +208,7 @@ export async function fetchStrapi<T>(
     ...(next && { next }),
   };
 
-  if (body && method !== "GET") {
+  if (body && method !== 'GET') {
     fetchOptions.body = JSON.stringify(body);
   }
 
@@ -171,15 +216,13 @@ export async function fetchStrapi<T>(
     const response = await fetch(url, fetchOptions);
 
     if (!response.ok) {
-      throw new Error(
-        `Strapi API error: ${response.status} ${response.statusText}`
-      );
+      throw new Error(`Strapi API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching from Strapi:", error);
+    console.error('Error fetching from Strapi:', error);
     throw error;
   }
 }
@@ -190,12 +233,9 @@ export async function fetchStrapi<T>(
 export async function fetchStrapiEntry<T>(
   endpoint: string,
   id: number | string,
-  options: Omit<StrapiQueryOptions, "pagination"> = {}
+  options: Omit<StrapiQueryOptions, 'pagination'> = {}
 ): Promise<StrapiEntity<T>> {
-  const response = await fetchStrapi<StrapiEntity<T>>(
-    `${endpoint}/${id}`,
-    options
-  );
+  const response = await fetchStrapi<StrapiEntity<T>>(`${endpoint}/${id}`, options);
   return response.data;
 }
 
@@ -215,11 +255,11 @@ export async function fetchStrapiEntries<T>(
  */
 export function populateDeep(fields: string[]): object {
   const populate: any = {};
-
+  
   fields.forEach((field) => {
-    const parts = field.split(".");
+    const parts = field.split('.');
     let current = populate;
-
+    
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
       if (i === parts.length - 1) {
@@ -232,6 +272,7 @@ export function populateDeep(fields: string[]): object {
       }
     }
   });
-
+  
   return populate;
 }
+
