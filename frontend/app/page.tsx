@@ -4,16 +4,18 @@ import VideoProfile from "@/components/sections/VideoProfile";
 import WelcomeSection from "@/components/sections/WelcomeSection";
 import StatsAndAccreditation from "@/components/sections/StatsAndAccreditation";
 import LatestNews from "@/components/sections/LatestNews";
+import AgendaSection from "@/components/sections/AgendaSection";
 
 export default function Home() {
-  return (
-    <main className="flex flex-col min-h-screen">
-      <HeroSlider />
-      <QuickAccess />
-      <VideoProfile />
-      <WelcomeSection />
-      <StatsAndAccreditation />
-      <LatestNews />
-    </main>
-  );
+    return (
+        <main className="flex flex-col min-h-screen">
+            <HeroSlider />
+            <QuickAccess />
+            <VideoProfile />
+            <WelcomeSection />
+            <StatsAndAccreditation />
+            <LatestNews />
+            <AgendaSection />
+        </main>
+    );
 }
