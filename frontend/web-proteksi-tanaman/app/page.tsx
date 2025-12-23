@@ -2,6 +2,7 @@ import HeroSlider from "@/components/sections/HeroSlider";
 import QuickAccess from "@/components/sections/QuickAccess";
 import VideoProfile from "@/components/sections/VideoProfile";
 import WelcomeSection from "@/components/sections/WelcomeSection";
+import StatsAndAccreditation from "@/components/sections/StatsAndAccreditation";
 
 export default function Home() {
     return (
@@ -10,10 +11,11 @@ export default function Home() {
             <QuickAccess />
             <VideoProfile />
 
-            {/* Bagian Sambutan Zig-Zag */}
+
             <WelcomeSection />
 
-            {/* Footer atau konten lain nanti... */}
+            <StatsAndAccreditation />
+
         </main>
     );
 }

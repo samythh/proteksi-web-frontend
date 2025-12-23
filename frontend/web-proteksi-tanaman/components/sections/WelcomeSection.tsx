@@ -35,7 +35,7 @@ const PROFILES: ProfileData[] = [
 
 export default function WelcomeSection() {
     return (
-        <section className="bg-white py-16 md:py-24 overflow-hidden">
+        <section className="bg-white pt-16 md:pt-24 pb-48 md:pb-80 overflow-hidden relative z-10">
             <div className="container mx-auto px-8 md:px-24 lg:px-48 space-y-20 md:space-y-32">
 
                 {PROFILES.map((profile, index) => {
