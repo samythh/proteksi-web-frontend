@@ -1,4 +1,3 @@
-// File: components/sections/HeroSlider.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -137,7 +136,7 @@ export default function HeroSlider({ data }: HeroSliderProps) {
                         {/* Gradien Bawah ke Atas (Agar footer slider jelas) */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90" />
 
-                        {/* Gradien Kiri ke Kanan (PENTING UNTUK RATA KIRI) */}
+                        {/* Gradien Kiri ke Kanan */}
                         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent opacity-90" />
 
                         {/* LAYER 3: KONTEN TEKS - PENEGASAN RATA KIRI */}
