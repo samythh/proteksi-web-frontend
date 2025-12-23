@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_layout_navbars",
+  "info": {
+    "displayName": "Navbar"
+  },
+  "options": {},
+  "attributes": {
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "departementName": {
+      "type": "string"
+    },
+    "fakultasName": {
+      "type": "string"
+    },
+    "menus": {
+      "type": "component",
+      "component": "navigation.menu-item",
+      "repeatable": true
+    },
+    "showSearch": {
+      "type": "boolean",
+      "default": true
+    },
+    "showLanguege": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "config": {}
+}

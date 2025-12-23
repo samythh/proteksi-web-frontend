@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_elements_hero_slides",
+  "info": {
+    "displayName": "HeroSlide",
+    "icon": "alien"
+  },
+  "options": {},
+  "attributes": {
+    "backgroundImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "text"
+    }
+  },
+  "config": {}
+}
