@@ -5,6 +5,9 @@ import WelcomeSection from "@/components/sections/WelcomeSection";
 import StatsAndAccreditation from "@/components/sections/StatsAndAccreditation";
 import LatestNews from "@/components/sections/LatestNews";
 import AgendaSection from "@/components/sections/AgendaSection";
+import PartnershipSection from "@/components/sections/PartnershipSection";
+import VisitorStats from "@/components/sections/VisitorStats";
+
 
 export default function Home() {
     return (
@@ -16,6 +19,9 @@ export default function Home() {
             <StatsAndAccreditation />
             <LatestNews />
             <AgendaSection />
+            <PartnershipSection />
+            <VisitorStats />
+
         </main>
     );
 }
