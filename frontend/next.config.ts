@@ -25,8 +25,13 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'upload.wikimedia.org', 
       },
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com', // <--- TAMBAHAN BARU (Thumbnail YouTube)
+      },
     ],
   },
+  
 };
 
 export default nextConfig;

@@ -7,6 +7,7 @@ import LatestNews from "@/components/sections/LatestNews";
 import AgendaSection from "@/components/sections/AgendaSection";
 import PartnershipSection from "@/components/sections/PartnershipSection";
 import VisitorStats from "@/components/sections/VisitorStats";
+import FeaturedVideoSection from "@/components/sections/FeaturedVideoSection";
 
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
             <AgendaSection />
             <PartnershipSection />
             <VisitorStats />
+            <FeaturedVideoSection />
 
         </main>
     );
