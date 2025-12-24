@@ -8,6 +8,7 @@ import AgendaSection from "@/components/sections/AgendaSection";
 import PartnershipSection from "@/components/sections/PartnershipSection";
 import VisitorStats from "@/components/sections/VisitorStats";
 import FeaturedVideoSection from "@/components/sections/FeaturedVideoSection";
+import OtherLinksSection from "@/components/sections/OtherLinksSection";
 
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
             <PartnershipSection />
             <VisitorStats />
             <FeaturedVideoSection />
+            <OtherLinksSection />
 
         </main>
     );
