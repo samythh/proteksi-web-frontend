@@ -81,7 +81,7 @@ export default function OtherLinksSection() {
                            <item.icon size={28} strokeWidth={2} />
                         </div>
 
-                        {/* Teks: Warna Hitam */}
+                        {/* Teks: Warna Hitam/Gelap */}
                         <span className="font-bold text-gray-800 text-xs md:text-sm leading-tight group-hover:text-[#749F74] transition-colors">
                            {item.title}
                         </span>
