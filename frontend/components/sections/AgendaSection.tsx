@@ -92,6 +92,14 @@ export default function AgendaSection() {
 
     return (
         <section className="bg-gray-50 py-16 md:py-20 overflow-hidden">
+
+            {/* GLOBAL STYLE UTILITY */}
+            <style dangerouslySetInnerHTML={{
+                __html: `
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}} />
+
             <div className="container mx-auto px-6 md:px-12 lg:px-24">
 
                 {/* HEADER */}
@@ -124,22 +132,23 @@ export default function AgendaSection() {
                 <div className="relative">
                     <div className="overflow-hidden -mx-4 px-4 py-2">
                         <div
-                            className="flex gap-4 md:gap-6 transition-transform duration-500 ease-out"
+                            className="flex gap-4 md:gap-6 transition-transform duration-500 ease-out [--slide-pct:100%] md:[--slide-pct:50%] lg:[--slide-pct:25%]"
+                            // 3. Menggunakan Inline Style dengan kalkulasi CSS Variable (Aman dari Hydration)
                             style={{
-                                transform: `translateX(-${currentIndex * 100}%)`
+                                transform: `translateX(calc(var(--slide-pct) * -${currentIndex}))`
                             }}
                         >
                             {data.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="shrink-0 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]"
+                                    className="flex-shrink-0 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]"
                                 >
                                     {/* ISI KARTU */}
                                     <div className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 h-full flex flex-col border border-gray-100 overflow-hidden group">
 
                                         {/* GAMBAR FLYER */}
                                         <div className="p-5 pb-0">
-                                            <div className="relative aspect-3/4 w-full rounded-lg overflow-hidden bg-gray-100 shadow-sm">
+                                            <div className="relative aspect-[3/4] w-full rounded-lg overflow-hidden bg-gray-100 shadow-sm">
                                                 <Image
                                                     src={item.image}
                                                     alt={item.title}
@@ -169,12 +178,12 @@ export default function AgendaSection() {
                                                             key={idx}
                                                             className={`text-[9px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${getTagStyle(tag)}`}
                                                         >
-                                      {tag}
-                                  </span>
+                                                            {tag}
+                                                        </span>
                                                     ))}
                                                 </div>
-                                                <div className="absolute top-0 right-0 h-full w-4 bg-linear-to-l from-white to-transparent pointer-events-none"></div>
-                                                <div className="absolute top-0 left-0 h-full w-4 bg-linear-to-r from-white to-transparent pointer-events-none"></div>
+                                                <div className="absolute top-0 right-0 h-full w-4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+                                                <div className="absolute top-0 left-0 h-full w-4 bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
                                             </div>
 
                                             <div className="mt-auto flex justify-end">
@@ -194,8 +203,8 @@ export default function AgendaSection() {
 
                     {/* NAVIGASI MOBILE */}
                     <div className="flex md:hidden justify-between mt-4 px-2">
-                        <button onClick={prevSlide} disabled={isStart} className="p-2 border rounded-full disabled:opacity-30"><ChevronLeft size={20}/></button>
-                        <button onClick={nextSlide} disabled={isEnd} className="p-2 border rounded-full disabled:opacity-30"><ChevronRight size={20}/></button>
+                        <button onClick={prevSlide} disabled={isStart} className="p-2 border rounded-full disabled:opacity-30"><ChevronLeft size={20} /></button>
+                        <button onClick={nextSlide} disabled={isEnd} className="p-2 border rounded-full disabled:opacity-30"><ChevronRight size={20} /></button>
                     </div>
                 </div>
 
@@ -208,32 +217,6 @@ export default function AgendaSection() {
                 </div>
 
             </div>
-
-            <style jsx global>{`
-                .no-scrollbar::-webkit-scrollbar {
-                    display: none;
-                }
-                .no-scrollbar {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-            `}</style>
-
-            <style jsx>{`
-                .transition-transform {
-                    transform: translateX(-${currentIndex * 100}%);
-                }
-                @media (min-width: 768px) {
-                    .transition-transform {
-                        transform: translateX(-${currentIndex * 50}%);
-                    }
-                }
-                @media (min-width: 1024px) {
-                    .transition-transform {
-                        transform: translateX(-${currentIndex * 25}%);
-                    }
-                }
-            `}</style>
         </section>
     );
 }
