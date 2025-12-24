@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Search, Menu, X, ChevronDown } from "lucide-react";
+import { Search, Menu, X } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -71,11 +71,37 @@ const menuItems: MenuItem[] = [
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
+  // --- LOGIKA SMART SCROLL (BARU) ---
+  const [isVisible, setIsVisible] = React.useState(true); // Status apakah navbar terlihat
+  const [lastScrollY, setLastScrollY] = React.useState(0); // Menyimpan posisi scroll terakhir
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Logika: Jika scroll ke bawah (current > last) DAN posisi sudah > 10px dari atas
+      if (currentScrollY > lastScrollY && currentScrollY > 10) {
+        setIsVisible(false); // Sembunyikan Navbar
+      } else {
+        setIsVisible(true); // Tampilkan Navbar (Scroll ke atas)
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    // event listener saat komponen dimuat
+    window.addEventListener("scroll", handleScroll);
+
+    // Bersihkan event listener saat komponen dilepas (unmount)
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
+
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   // Helper render untuk Desktop Nested Menu
   const renderMenuItem = (item: MenuItemChild, index: number) => {
-    // 1. Jika punya anak (Nested Group)
     if (item.children && item.children.length > 0) {
       return (
         <li key={index} className="rounded-md bg-slate-50 p-3">
@@ -100,7 +126,6 @@ export default function Navbar() {
       );
     }
 
-    // 2. Jika item biasa (Link)
     return (
       <li key={index}>
         <NavigationMenuLink asChild>
@@ -116,7 +141,16 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full bg-[#005320] text-white px-4 py-3 shadow-md sticky top-0 z-50">
+    <nav
+      className={cn(
+        // Style Dasar
+        "w-full bg-[#005320] text-white px-4 py-3 shadow-md z-50",
+        "fixed top-0 left-0 right-0",
+        // Properti Transisi Animasi
+        "transition-transform duration-300 ease-in-out",
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      )}
+    >
       <div className="container mx-auto flex items-center justify-between">
         {/* === LOGO & BRANDING === */}
         <div className="flex items-center gap-3">
@@ -124,7 +158,6 @@ export default function Navbar() {
             href="/"
             className="flex items-center gap-3 hover:opacity-90 transition-opacity"
           >
-            {/* Logo dengan shield-like border */}
             <div className="relative h-12 w-12 flex items-center justify-center shrink-0">
               <Image
                 src="/LogoUNAND.png"
@@ -134,9 +167,7 @@ export default function Navbar() {
                 className="relative z-10"
               />
             </div>
-            {/* Vertical line separator */}
             <div className="h-10 w-px bg-white/30" aria-hidden="true" />
-            {/* Text branding */}
             <div className="flex flex-col leading-tight">
               <span className="font-bold md:text-lg tracking-wide text-xs">
                 Departemen Proteksi Tanaman
@@ -154,7 +185,6 @@ export default function Navbar() {
             {menuItems.map((item, index) => (
               <NavigationMenuItem key={index}>
                 {item.children ? (
-                  // Kalo ada Dropdown
                   <>
                     <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 hover:text-white focus:bg-white/20 focus:text-white data-[state=open]:bg-white/20 font-bold flex items-center gap-1">
                       {item.title}
@@ -168,8 +198,6 @@ export default function Navbar() {
                     </NavigationMenuContent>
                   </>
                 ) : (
-                  // Kalo Link Biasa (Beranda)
-                  // PERBAIKAN UTAMA DI SINI:
                   <NavigationMenuLink asChild>
                     <Link
                       href={item.href || "#"}
@@ -192,10 +220,8 @@ export default function Navbar() {
           <button className="p-2 rounded-full hover:bg-white/10 transition-colors">
             <Search className="w-5 h-5 text-white" />
           </button>
-          {/* Language selector with Indonesian flag */}
           <button className="flex items-center gap-2 px-2 py-1 rounded hover:bg-white/10 transition-colors">
             <div className="flex items-center">
-              {/* Indonesian flag */}
               <div className="w-5 h-3 border border-white/30 flex flex-col">
                 <div className="h-1/2 bg-red-600" />
                 <div className="h-1/2 bg-white" />
@@ -216,7 +242,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* === MOBILE MENU (Sederhana tanpa Radix UI biar ringan) === */}
+      {/* === MOBILE MENU === */}
       {mobileMenuOpen && (
         <div className="lg:hidden mt-4 pb-4 border-t border-white/20">
           <ul className="flex flex-col gap-2 pt-4 px-2">
