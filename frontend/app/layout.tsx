@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import React from "react";
-import Navbar from "@/components/ui/navbar"; 
-import Footer from "@/components/ui/footer"; 
+import Navbar from "@/components/ui/navbar";
+import Footer from "@/components/ui/footer";
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import AccessibilityWidget from "@/components/ui/AccessibilityWidget";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,7 +24,9 @@ export default function RootLayout({
         <main className="flex-grow">{children}</main>
 
         <Footer />
+
         <ScrollToTop />
+        <AccessibilityWidget />
       </body>
     </html>
   );
