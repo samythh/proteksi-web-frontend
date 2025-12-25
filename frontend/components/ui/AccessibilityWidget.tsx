@@ -63,20 +63,22 @@ export default function AccessibilityWidget() {
 
    return (
       <>
-         <style jsx global>{`
+         <style dangerouslySetInnerHTML={{
+            __html: `
         body.access-highlight-links a {
           text-decoration: underline !important;
           background-color: yellow !important;
           color: black !important;
           font-weight: bold !important;
         }
+        
         body.access-hide-images img,
         body.access-hide-images video,
         body.access-hide-images iframe {
           opacity: 0 !important;
           visibility: hidden !important;
         }
-      `}</style>
+      `}} />
 
          {/* --- TOMBOL FLOAT UTAMA --- */}
          <div className="fixed bottom-24 right-8 z-50">
@@ -144,12 +146,12 @@ export default function AccessibilityWidget() {
    );
 }
 
-// 2. DEFINISI INTERFACE UNTUK PROPS
+// Interface Props (Mempertahankan perbaikan TypeScript sebelumnya)
 interface FeatureButtonProps {
-   active: boolean;          // true/false
-   onClick: () => void;      // Fungsi void
-   icon: LucideIcon;         // Tipe khusus Icon dari lucide-react
-   label: string;            // Teks biasa
+   active: boolean;
+   onClick: () => void;
+   icon: LucideIcon;
+   label: string;
 }
 
 function FeatureButton({ active, onClick, icon: Icon, label }: FeatureButtonProps) {

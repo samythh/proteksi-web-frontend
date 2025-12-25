@@ -1,3 +1,4 @@
+// File: components/Navbar.tsx
 "use client";
 
 import * as React from "react";
@@ -71,28 +72,28 @@ const menuItems: MenuItem[] = [
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  // --- LOGIKA SMART SCROLL (BARU) ---
-  const [isVisible, setIsVisible] = React.useState(true); // Status apakah navbar terlihat
-  const [lastScrollY, setLastScrollY] = React.useState(0); // Menyimpan posisi scroll terakhir
+  // --- 1. STATE UNTUK MENGATASI HYDRATION ERROR ---
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  // --- 2. LOGIKA SCROLL ---
+  const [isVisible, setIsVisible] = React.useState(true);
+  const [lastScrollY, setLastScrollY] = React.useState(0);
 
   React.useEffect(() => {
+    // Menandakan bahwa komponen sudah dimuat di browser (Client)
+    setIsMounted(true);
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
-      // Logika: Jika scroll ke bawah (current > last) DAN posisi sudah > 10px dari atas
       if (currentScrollY > lastScrollY && currentScrollY > 10) {
-        setIsVisible(false); // Sembunyikan Navbar
+        setIsVisible(false);
       } else {
-        setIsVisible(true); // Tampilkan Navbar (Scroll ke atas)
+        setIsVisible(true);
       }
-
       setLastScrollY(currentScrollY);
     };
 
-    // event listener saat komponen dimuat
     window.addEventListener("scroll", handleScroll);
-
-    // Bersihkan event listener saat komponen dilepas (unmount)
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -100,7 +101,7 @@ export default function Navbar() {
 
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
-  // Helper render untuk Desktop Nested Menu
+  // Helper render (sama seperti sebelumnya)
   const renderMenuItem = (item: MenuItemChild, index: number) => {
     if (item.children && item.children.length > 0) {
       return (
@@ -143,16 +144,15 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        // Style Dasar
         "w-full bg-[#005320] text-white px-4 py-3 shadow-md z-50",
         "fixed top-0 left-0 right-0",
-        // Properti Transisi Animasi
         "transition-transform duration-300 ease-in-out",
         isVisible ? "translate-y-0" : "-translate-y-full"
       )}
     >
       <div className="container mx-auto flex items-center justify-between">
-        {/* === LOGO & BRANDING === */}
+
+        {/* === LOGO (TETAP DI-RENDER SERVER AGAR TIDAK KEDIP) === */}
         <div className="flex items-center gap-3">
           <Link
             href="/"
@@ -179,41 +179,47 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* === DESKTOP MENU === */}
-        <NavigationMenu className="hidden lg:flex">
-          <NavigationMenuList className="gap-1">
-            {menuItems.map((item, index) => (
-              <NavigationMenuItem key={index}>
-                {item.children ? (
-                  <>
-                    <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 hover:text-white focus:bg-white/20 focus:text-white data-[state=open]:bg-white/20 font-bold flex items-center gap-1">
-                      {item.title}
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid w-[300px] gap-2 p-4 bg-white text-black rounded-md shadow-lg">
-                        {item.children.map((child, childIdx) =>
-                          renderMenuItem(child, childIdx)
+        {/* === DESKTOP MENU (HANYA RENDER JIKA SUDAH MOUNTED) === */}
+        {/* Perbaikan Utama: Membungkus Menu dengan isMounted */}
+        {isMounted ? (
+          <NavigationMenu className="hidden lg:flex">
+            <NavigationMenuList className="gap-1">
+              {menuItems.map((item, index) => (
+                <NavigationMenuItem key={index}>
+                  {item.children ? (
+                    <>
+                      <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 hover:text-white focus:bg-white/20 focus:text-white data-[state=open]:bg-white/20 font-bold flex items-center gap-1">
+                        {item.title}
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <ul className="grid w-[300px] gap-2 p-4 bg-white text-black rounded-md shadow-lg">
+                          {item.children.map((child, childIdx) =>
+                            renderMenuItem(child, childIdx)
+                          )}
+                        </ul>
+                      </NavigationMenuContent>
+                    </>
+                  ) : (
+                    <NavigationMenuLink asChild>
+                      <Link
+                        href={item.href || "#"}
+                        className={cn(
+                          navigationMenuTriggerStyle(),
+                          "bg-transparent text-white hover:bg-white/10 hover:text-white focus:bg-white/20 focus:text-white font-bold cursor-pointer"
                         )}
-                      </ul>
-                    </NavigationMenuContent>
-                  </>
-                ) : (
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href={item.href || "#"}
-                      className={cn(
-                        navigationMenuTriggerStyle(),
-                        "bg-transparent text-white hover:bg-white/10 hover:text-white focus:bg-white/20 focus:text-white font-bold cursor-pointer"
-                      )}
-                    >
-                      {item.title}
-                    </Link>
-                  </NavigationMenuLink>
-                )}
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
+                      >
+                        {item.title}
+                      </Link>
+                    </NavigationMenuLink>
+                  )}
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
+        ) : (
+          // Placeholder Kosong saat Loading (Opsional, agar layout stabil)
+          <div className="hidden lg:flex w-full h-10"></div>
+        )}
 
         {/* === RIGHT ICONS === */}
         <div className="flex items-center gap-3">
